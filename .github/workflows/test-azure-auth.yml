@@ -9,8 +9,22 @@ jobs:
     permissions:
       id-token: write
       contents: read
+    env:
+      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
     steps:
+      - name: Check Azure credentials
+        id: check
+        run: |
+          if (-not $env:AZURE_CLIENT_ID) {
+            Write-Host "::warning::Azure credentials not configured. Skipping test."
+            echo "configured=false" >> $env:GITHUB_OUTPUT
+          } else {
+            echo "configured=true" >> $env:GITHUB_OUTPUT
+          }
+        shell: pwsh
+
       - name: Azure Login (OIDC)
+        if: steps.check.outputs.configured == 'true'
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
@@ -18,4 +32,11 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Success
+        if: steps.check.outputs.configured == 'true'
         run: echo "Azure authentication successful!"
+
+      - name: Skip notice
+        if: steps.check.outputs.configured == 'false'
+        run: |
+          echo "## ⏭️ Test Skipped" >> $GITHUB_STEP_SUMMARY
+          echo "Azure credentials (AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_SUBSCRIPTION_ID) are not configured." >> $GITHUB_STEP_SUMMARY

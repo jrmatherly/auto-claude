@@ -7,6 +7,7 @@ Makefile targets, Poetry scripts, shell scripts) and custom
 command allowlists.
 """
 
+import json
 import re
 from pathlib import Path
 
@@ -41,6 +42,7 @@ class StructureAnalyzer:
         """
         self.detect_custom_scripts()
         self.load_custom_allowlist()
+        self._load_security_defaults()
         return self.custom_scripts, self.script_commands, self.custom_commands
 
     def detect_custom_scripts(self) -> None:
@@ -121,3 +123,62 @@ class StructureAnalyzer:
             # Skip comments and empty lines
             if line and not line.startswith("#"):
                 self.custom_commands.add(line)
+
+    def _load_security_defaults(self) -> None:
+        """
+        Load pre-approved commands from security_defaults.json.
+
+        This file can be placed in .auto-claude/ directory to provide
+        workspace-wide security defaults for multi-repo workspaces.
+
+        Expected format:
+        {
+            "custom_scripts": {
+                "make_targets": ["build", "test", ...],
+                "mise_tasks": ["mise run all", ...]
+            },
+            "validation_commands": {
+                "go": {"build": "go build ./...", ...},
+                ...
+            }
+        }
+        """
+        defaults_path = self.project_dir / ".auto-claude" / "security_defaults.json"
+        if not defaults_path.exists():
+            return
+
+        try:
+            with open(defaults_path, encoding="utf-8") as f:
+                data = json.load(f)
+        except (OSError, json.JSONDecodeError):
+            return
+
+        # Load custom scripts section
+        custom_scripts = data.get("custom_scripts", {})
+
+        # Add make targets from defaults
+        make_targets = custom_scripts.get("make_targets", [])
+        for target in make_targets:
+            if target not in self.custom_scripts.make_targets:
+                self.custom_scripts.make_targets.append(target)
+        if make_targets:
+            self.script_commands.add("make")
+
+        # Add mise tasks from defaults
+        mise_tasks = custom_scripts.get("mise_tasks", [])
+        for task in mise_tasks:
+            if task not in self.custom_scripts.mise_tasks:
+                self.custom_scripts.mise_tasks.append(task)
+        if mise_tasks:
+            self.script_commands.add("mise")
+
+        # Load validation commands as custom commands
+        validation_commands = data.get("validation_commands", {})
+        for _category, commands in validation_commands.items():
+            if isinstance(commands, dict):
+                for cmd in commands.values():
+                    if isinstance(cmd, str):
+                        # Extract base command (first word)
+                        base_cmd = cmd.split()[0] if cmd else ""
+                        if base_cmd:
+                            self.custom_commands.add(base_cmd)

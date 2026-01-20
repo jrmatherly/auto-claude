@@ -32,6 +32,7 @@ class CustomScripts:
     poetry_scripts: list[str] = field(default_factory=list)
     cargo_aliases: list[str] = field(default_factory=list)
     shell_scripts: list[str] = field(default_factory=list)
+    mise_tasks: list[str] = field(default_factory=list)  # mise task runner commands
 
 
 @dataclass
