@@ -131,9 +131,9 @@ Once the PR is approved and merged to `main`, GitHub Actions will automatically:
 ### Step 5: Verify
 
 After merging, check:
-- [GitHub Actions](https://github.com/AndyMik90/Auto-Claude/actions) - ensure all workflows pass
-- [Releases](https://github.com/AndyMik90/Auto-Claude/releases) - verify release was created
-- [README](https://github.com/AndyMik90/Auto-Claude#download) - confirm version updated
+- [GitHub Actions](https://github.com/jrmatherly/auto-claude/actions) - ensure all workflows pass
+- [Releases](https://github.com/jrmatherly/auto-claude/releases) - verify release was created
+- [README](https://github.com/jrmatherly/auto-claude#download) - confirm version updated
 
 ## Version Numbering
 

@@ -132,7 +132,7 @@ The fastest way to get started:
 
 ```bash
 # Clone the repository
-git clone https://github.com/AndyMik90/Auto-Claude.git
+git clone https://github.com/jrmatherly/auto-claude.git
 cd Auto-Claude
 
 # Install all dependencies (cross-platform)
@@ -206,7 +206,7 @@ If you want to run Auto Claude from source (for development or testing unrelease
 ### Step 1: Clone and Set Up
 
 ```bash
-git clone https://github.com/AndyMik90/Auto-Claude.git
+git clone https://github.com/jrmatherly/auto-claude.git
 cd Auto-Claude/apps/backend
 
 # Using uv (recommended)
@@ -250,7 +250,7 @@ Auto Claude automatically downloads prebuilt binaries for Windows. If prebuilts 
 
 </details>
 
-> **Note:** For regular usage, we recommend downloading the pre-built releases from [GitHub Releases](https://github.com/AndyMik90/Auto-Claude/releases). Running from source is primarily for contributors and those testing unreleased features.
+> **Note:** For regular usage, we recommend downloading the pre-built releases from [GitHub Releases](https://github.com/jrmatherly/auto-claude/releases). Running from source is primarily for contributors and those testing unreleased features.
 
 ## Pre-commit Hooks
 
@@ -413,7 +413,7 @@ with open(path, "rb") as f:  # Correct
     data = f.read()
 ```
 
-Our pre-commit hooks automatically check for missing encoding parameters. See [PR #782](https://github.com/AndyMik90/Auto-Claude/pull/782) for the comprehensive encoding fix and [guides/windows-development.md](guides/windows-development.md) for Windows-specific development guidance.
+Our pre-commit hooks automatically check for missing encoding parameters. See [PR #782](https://github.com/jrmatherly/auto-claude/pull/782) for the comprehensive encoding fix and [guides/windows-development.md](guides/windows-development.md) for Windows-specific development guidance.
 
 ## Testing
 
