@@ -66,6 +66,7 @@ node scripts/bump-version.js 2.8.0   # Set specific version
 ```
 
 This will:
+
 - Update `apps/frontend/package.json`
 - Update `package.json` (root)
 - Update `apps/backend/__init__.py`
@@ -131,6 +132,7 @@ Once the PR is approved and merged to `main`, GitHub Actions will automatically:
 ### Step 5: Verify
 
 After merging, check:
+
 - [GitHub Actions](https://github.com/jrmatherly/auto-claude/actions) - ensure all workflows pass
 - [Releases](https://github.com/jrmatherly/auto-claude/releases) - verify release was created
 - [README](https://github.com/jrmatherly/auto-claude#download) - confirm version updated
@@ -193,12 +195,14 @@ The release workflow **validates** that `CHANGELOG.md` has an entry for the vers
 ### Release didn't trigger after merge
 
 1. Check if version in `package.json` is greater than latest tag:
+
    ```bash
    git tag -l 'v*' --sort=-version:refname | head -1
    cat apps/frontend/package.json | grep version
    ```
 
 2. Ensure the merge commit touched `package.json`:
+
    ```bash
    git diff HEAD~1 --name-only | grep package.json
    ```

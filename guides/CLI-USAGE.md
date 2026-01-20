@@ -1,6 +1,6 @@
 # Auto Claude CLI Usage
 
-This document covers terminal-only usage of Auto Claude. **For most users, we recommend using the [Desktop UI](#) instead** - it provides a better experience with visual task management, progress tracking, and automatic Python environment setup.
+This document covers terminal-only usage of Auto Claude. **For most users, we recommend using the [Desktop UI](../README.md) instead** - it provides a better experience with visual task management, progress tracking, and automatic Python environment setup.
 
 ## When to Use CLI
 
@@ -16,21 +16,25 @@ This document covers terminal-only usage of Auto Claude. **For most users, we re
 ### Installing Python
 
 **Windows:**
+
 ```bash
 winget install Python.Python.3.12
 ```
 
 **macOS:**
+
 ```bash
 brew install python@3.12
 ```
 
 **Linux (Ubuntu/Debian):**
+
 ```bash
 sudo apt install python3.12 python3.12-venv
 ```
 
 **Linux (Fedora):**
+
 ```bash
 sudo dnf install python3.12
 ```
@@ -126,6 +130,7 @@ python run.py --spec 001 --qa-status
 ```
 
 The QA validation loop:
+
 1. **QA Reviewer** checks all acceptance criteria
 2. If issues found → creates `QA_FIX_REQUEST.md`
 3. **QA Fixer** applies fixes
@@ -166,6 +171,7 @@ Ctrl+C (twice)
 ```
 
 **File-based alternative:**
+
 ```bash
 # Create PAUSE file to pause after current session
 touch specs/001-name/PAUSE

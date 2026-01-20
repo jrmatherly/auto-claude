@@ -91,19 +91,23 @@
 ## Interface
 
 ### Kanban Board
+
 Visual task management from planning through completion. Create tasks and monitor agent progress in real-time.
 
 ### Agent Terminals
+
 AI-powered terminals with one-click task context injection. Spawn multiple agents for parallel work.
 
 ![Agent Terminals](.github/assets/Auto-Claude-Agents-terminals.png)
 
 ### Roadmap
+
 AI-assisted feature planning with competitor analysis and audience targeting.
 
 ![Roadmap](.github/assets/Auto-Claude-roadmap.png)
 
 ### Additional Features
+
 - **Insights** - Chat interface for exploring your codebase
 - **Ideation** - Discover improvements, performance issues, and vulnerabilities
 - **Changelog** - Generate release notes from completed tasks
@@ -163,6 +167,7 @@ Auto Claude uses a three-layer security model:
 3. **Dynamic Command Allowlist** - Only approved commands based on detected project stack
 
 All releases are:
+
 - Scanned with VirusTotal before publishing
 - Include SHA256 checksums for verification
 - Code-signed where applicable (macOS)
@@ -190,6 +195,7 @@ All releases are:
 ## Contributing
 
 We welcome contributions! Please read [CONTRIBUTING.md](CONTRIBUTING.md) for:
+
 - Development setup instructions
 - Code style guidelines
 - Testing requirements

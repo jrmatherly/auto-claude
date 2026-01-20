@@ -4,30 +4,60 @@ Thank you for your interest in contributing to Auto Claude! This document provid
 
 ## Table of Contents
 
-- [Contributor License Agreement (CLA)](#contributor-license-agreement-cla)
-- [Prerequisites](#prerequisites)
-- [Quick Start](#quick-start)
-- [Development Setup](#development-setup)
-  - [Python Backend](#python-backend)
-  - [Electron Frontend](#electron-frontend)
-- [Running from Source](#running-from-source)
-- [Pre-commit Hooks](#pre-commit-hooks)
-- [Code Style](#code-style)
-- [Testing](#testing)
-- [Continuous Integration](#continuous-integration)
-- [Git Workflow](#git-workflow)
-  - [Branch Overview](#branch-overview)
-  - [Main Branches](#main-branches)
-  - [Supporting Branches](#supporting-branches)
-  - [Branch Naming](#branch-naming)
-  - [Where to Branch From](#where-to-branch-from)
-  - [Pull Request Targets](#pull-request-targets)
-  - [Release Process](#release-process-maintainers)
-  - [Commit Messages](#commit-messages)
-  - [PR Hygiene](#pr-hygiene)
-- [Pull Request Process](#pull-request-process)
-- [Issue Reporting](#issue-reporting)
-- [Architecture Overview](#architecture-overview)
+1. [Contributing to Auto Claude](#contributing-to-auto-claude)
+   1. [Table of Contents](#table-of-contents)
+   2. [Contributor License Agreement (CLA)](#contributor-license-agreement-cla)
+      1. [Why We Require a CLA](#why-we-require-a-cla)
+      2. [How to Sign](#how-to-sign)
+   3. [Prerequisites](#prerequisites)
+      1. [Installing Python 3.12](#installing-python-312)
+      2. [Installing Node.js 24+](#installing-nodejs-24)
+      3. [Installing CMake](#installing-cmake)
+   4. [Quick Start](#quick-start)
+   5. [Development Setup](#development-setup)
+      1. [Python Backend](#python-backend)
+      2. [Electron Frontend](#electron-frontend)
+   6. [Running from Source](#running-from-source)
+      1. [Step 1: Clone and Set Up](#step-1-clone-and-set-up)
+      2. [Step 2: Run the Desktop UI](#step-2-run-the-desktop-ui)
+   7. [Pre-commit Hooks](#pre-commit-hooks)
+      1. [Setup](#setup)
+      2. [What Runs on Commit](#what-runs-on-commit)
+      3. [Running Manually](#running-manually)
+      4. [If a Check Fails](#if-a-check-fails)
+   8. [Code Style](#code-style)
+      1. [Python](#python)
+      2. [TypeScript/React](#typescriptreact)
+      3. [General](#general)
+      4. [File Encoding (Python)](#file-encoding-python)
+   9. [Testing](#testing)
+      1. [Python Tests](#python-tests)
+      2. [Frontend Tests](#frontend-tests)
+      3. [Testing Requirements](#testing-requirements)
+   10. [Continuous Integration](#continuous-integration)
+       1. [Workflows](#workflows)
+       2. [PR Requirements](#pr-requirements)
+       3. [Running CI Checks Locally](#running-ci-checks-locally)
+   11. [Git Workflow](#git-workflow)
+       1. [Branch Overview](#branch-overview)
+       2. [Main Branches](#main-branches)
+       3. [Supporting Branches](#supporting-branches)
+       4. [Branch Naming](#branch-naming)
+       5. [Where to Branch From](#where-to-branch-from)
+       6. [Pull Request Targets](#pull-request-targets)
+       7. [Release Process (Maintainers)](#release-process-maintainers)
+       8. [Beta Release Process (Maintainers)](#beta-release-process-maintainers)
+       9. [Hotfix Workflow](#hotfix-workflow)
+       10. [Commit Messages](#commit-messages)
+       11. [PR Hygiene](#pr-hygiene)
+   12. [Pull Request Process](#pull-request-process)
+   13. [Issue Reporting](#issue-reporting)
+       1. [Bug Reports](#bug-reports)
+       2. [Feature Requests](#feature-requests)
+   14. [Architecture Overview](#architecture-overview)
+       1. [Python Backend (`apps/backend/`)](#python-backend-appsbackend)
+       2. [Electron Frontend (`apps/frontend/`)](#electron-frontend-appsfrontend)
+   15. [Questions?](#questions)
 
 ## Contributor License Agreement (CLA)
 
@@ -62,21 +92,25 @@ Before contributing, ensure you have the following installed:
 ### Installing Python 3.12
 
 **Windows:**
+
 ```bash
 winget install Python.Python.3.12
 ```
 
 **macOS:**
+
 ```bash
 brew install python@3.12
 ```
 
 **Linux (Ubuntu/Debian):**
+
 ```bash
 sudo apt install python3.12 python3.12-venv
 ```
 
 **Linux (Fedora):**
+
 ```bash
 sudo dnf install python3.12
 ```
@@ -84,22 +118,26 @@ sudo dnf install python3.12
 ### Installing Node.js 24+
 
 **Windows:**
+
 ```bash
 winget install OpenJS.NodeJS.LTS
 ```
 
 **macOS:**
+
 ```bash
 brew install node@24
 ```
 
 **Linux (Ubuntu/Debian):**
+
 ```bash
 curl -fsSL https://deb.nodesource.com/setup_24.x | sudo -E bash -
 sudo apt install -y nodejs
 ```
 
 **Linux (Fedora):**
+
 ```bash
 sudo dnf install nodejs npm
 ```
@@ -107,21 +145,25 @@ sudo dnf install nodejs npm
 ### Installing CMake
 
 **Windows:**
+
 ```bash
 winget install Kitware.CMake
 ```
 
 **macOS:**
+
 ```bash
 brew install cmake
 ```
 
 **Linux (Ubuntu/Debian):**
+
 ```bash
 sudo apt install cmake
 ```
 
 **Linux (Fedora):**
+
 ```bash
 sudo dnf install cmake
 ```
@@ -133,7 +175,7 @@ The fastest way to get started:
 ```bash
 # Clone the repository
 git clone https://github.com/jrmatherly/auto-claude.git
-cd Auto-Claude
+cd auto-claude
 
 # Install all dependencies (cross-platform)
 npm run install:all
@@ -207,7 +249,7 @@ If you want to run Auto Claude from source (for development or testing unrelease
 
 ```bash
 git clone https://github.com/jrmatherly/auto-claude.git
-cd Auto-Claude/apps/backend
+cd auto-claude/apps/backend
 
 # Using uv (recommended)
 uv venv && uv pip install -r requirements.txt
@@ -362,6 +404,7 @@ export default function(props) {
 **Always specify `encoding="utf-8"` for text file operations** to ensure Windows compatibility.
 
 Windows Python defaults to `cp1252` encoding instead of UTF-8, causing errors with:
+
 - Emoji (🚀, ✅, ❌)
 - International characters (ñ, é, 中文, العربية)
 - Special symbols (™, ©, ®)
@@ -633,6 +676,7 @@ Beta releases allow users to test new features before they're included in a stab
 5. Click **Run workflow**
 
 The workflow will:
+
 - Validate the version format
 - Update `package.json` on develop
 - Create and push a tag (e.g., `v2.8.0-beta.1`)
@@ -640,6 +684,7 @@ The workflow will:
 - Create a GitHub pre-release
 
 **Version Format:**
+
 ```
 X.Y.Z-beta.N   (e.g., 2.8.0-beta.1, 2.8.0-beta.2)
 X.Y.Z-alpha.N  (e.g., 2.8.0-alpha.1)
@@ -712,6 +757,7 @@ git commit -m "WIP"
 ```
 
 **Format:**
+
 ```
 <type>: <subject>
 
@@ -728,6 +774,7 @@ git commit -m "WIP"
 ### PR Hygiene
 
 **Rebasing:**
+
 - **Rebase onto develop** before opening a PR and before merge to maintain linear history
 - Use `git fetch origin && git rebase origin/develop` to sync your branch
 - Use `--force-with-lease` when force-pushing rebased branches (safer than `--force`)
@@ -735,12 +782,14 @@ git commit -m "WIP"
 - **Exception:** Never rebase after PR is approved and others have reviewed specific commits
 
 **Commit organization:**
+
 - **Squash fixup commits** (typos, "oops", review feedback) into their parent commits
 - **Keep logically distinct changes** as separate commits that could be reverted independently
 - Each commit should compile and pass tests independently
 - No "WIP", "fix tests", or "lint" commits in final PR - squash these
 
 **Before requesting review:**
+
 ```bash
 # Ensure up-to-date with develop
 git fetch origin && git rebase origin/develop
@@ -757,6 +806,7 @@ cd apps/frontend && npm test && npm run lint && npm run typecheck
 ```
 
 **PR size:**
+
 - Keep PRs small (<400 lines changed ideally)
 - Split large features into stacked PRs if possible
 
@@ -773,6 +823,7 @@ cd apps/frontend && npm test && npm run lint && npm run typecheck
 2. **Make your changes** following the code style guidelines
 
 3. **Test thoroughly**:
+
    ```bash
    # Python (from repository root)
    npm run test:backend
@@ -794,9 +845,11 @@ cd apps/frontend && npm test && npm run lint && npm run typecheck
    - List any breaking changes
 
 6. **PR Title Format**:
+
    ```
    <type>: <description>
    ```
+
    Examples:
    - `feat: Add support for custom prompts`
    - `fix: Resolve memory leak in worker process`

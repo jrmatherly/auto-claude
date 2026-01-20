@@ -26,12 +26,14 @@ autonomous-coding/
 ```
 
 **When working with AI/LLM code:**
+
 - Look in `apps/backend/core/client.py` for the Claude SDK client setup
 - Reference `apps/backend/agents/` for working agent implementations
 - Check `apps/backend/spec_agents/` for spec creation agent examples
 - NEVER use `anthropic.Anthropic()` directly - always use `create_client()` from `core.client`
 
 **Frontend (Electron Desktop App):**
+
 - Built with Electron, React, TypeScript
 - AI agents can perform E2E testing using the Electron MCP server
 - When bug fixing or implementing features, use the Electron MCP server for automated testing
@@ -42,6 +44,7 @@ autonomous-coding/
 ### Setup
 
 **Requirements:**
+
 - Python 3.12+ (required for backend)
 - Node.js (for frontend)
 
@@ -63,6 +66,7 @@ claude
 ```
 
 ### Creating and Running Specs
+
 ```bash
 cd apps/backend
 
@@ -83,6 +87,7 @@ python run.py --list
 ```
 
 ### Workspace Management
+
 ```bash
 cd apps/backend
 
@@ -97,6 +102,7 @@ python run.py --spec 001 --discard
 ```
 
 ### QA Validation
+
 ```bash
 cd apps/backend
 
@@ -108,6 +114,7 @@ python run.py --spec 001 --qa-status
 ```
 
 ### Testing
+
 ```bash
 # Install test dependencies (required first time)
 cd apps/backend && uv pip install -r ../../tests/requirements-test.txt
@@ -129,11 +136,13 @@ npm run test:backend
 ```
 
 ### Spec Validation
+
 ```bash
 python apps/backend/validate_spec.py --spec-dir apps/backend/specs/001-feature --checkpoint all
 ```
 
 ### Releases
+
 ```bash
 # 1. Bump version on your branch (creates commit, no tag)
 node scripts/bump-version.js patch   # 2.8.0 -> 2.8.1
@@ -158,11 +167,13 @@ See [RELEASE.md](RELEASE.md) for detailed release process documentation.
 ### Core Pipeline
 
 **Spec Creation (spec_runner.py)** - Dynamic 3-8 phase pipeline based on task complexity:
+
 - SIMPLE (3 phases): Discovery → Quick Spec → Validate
 - STANDARD (6-7 phases): Discovery → Requirements → [Research] → Context → Spec → Plan → Validate
 - COMPLEX (8 phases): Full pipeline with Research and Self-Critique phases
 
 **Implementation (run.py → agent.py)** - Multi-session build:
+
 1. Planner Agent creates subtask-based implementation plan
 2. Coder Agent implements subtasks (can spawn subagents for parallel work)
 3. QA Reviewer validates acceptance criteria (can perform E2E testing via Electron MCP for frontend changes)
@@ -171,6 +182,7 @@ See [RELEASE.md](RELEASE.md) for detailed release process documentation.
 ### Key Components (apps/backend/)
 
 **Core Infrastructure:**
+
 - **core/client.py** - Claude Agent SDK client factory with security hooks and tool permissions
 - **core/security.py** - Dynamic command allowlisting based on detected project stack
 - **core/auth.py** - OAuth token management for Claude SDK authentication
@@ -178,6 +190,7 @@ See [RELEASE.md](RELEASE.md) for detailed release process documentation.
 - **spec_agents/** - Spec creation agents (gatherer, researcher, writer, critic)
 
 **Memory & Context:**
+
 - **integrations/graphiti/** - Graphiti memory system (mandatory)
   - `queries_pkg/graphiti.py` - Main GraphitiMemory class
   - `queries_pkg/client.py` - LadybugDB client wrapper
@@ -189,11 +202,13 @@ See [RELEASE.md](RELEASE.md) for detailed release process documentation.
 - **agents/memory_manager.py** - Session memory orchestration
 
 **Workspace & Security:**
+
 - **cli/worktree.py** - Git worktree isolation for safe feature development
 - **context/project_analyzer.py** - Project stack detection for dynamic tooling
 - **auto_claude_tools.py** - Custom MCP tools integration
 
 **Integrations:**
+
 - **linear_updater.py** - Optional Linear integration for progress tracking
 - **runners/github/** - GitHub Issues & PRs automation
 - **Electron MCP** - E2E testing integration for QA agents (Chrome DevTools Protocol)
@@ -219,6 +234,7 @@ See [RELEASE.md](RELEASE.md) for detailed release process documentation.
 ### Spec Directory Structure
 
 Each spec in `.auto-claude/specs/XXX-name/` contains:
+
 - `spec.md` - Feature specification
 - `requirements.json` - Structured user requirements
 - `context.json` - Discovered codebase context
@@ -236,6 +252,7 @@ main (user's branch)
 ```
 
 **Key principles:**
+
 - ONE branch per spec (`auto-claude/{spec-name}`)
 - Parallel work uses subagents (agent decides when to spawn)
 - NO automatic pushes to GitHub - user controls when to push
@@ -243,6 +260,7 @@ main (user's branch)
 - Final merge: spec branch → main (after user approval)
 
 **Workflow:**
+
 1. Build runs in isolated worktree on spec branch
 2. Agent implements subtasks (can spawn subagents for parallel work)
 3. User tests feature in `.worktrees/{spec-name}/`
@@ -254,6 +272,7 @@ main (user's branch)
 **CRITICAL: When submitting PRs to jrmatherly/auto-claude, always target the `develop` branch, NOT `main`.**
 
 **Correct workflow for contributions:**
+
 1. Fetch upstream: `git fetch upstream`
 2. Create feature branch from upstream/develop: `git checkout -b fix/my-fix upstream/develop`
 3. Make changes and commit with sign-off: `git commit -s -m "fix: description"`
@@ -261,6 +280,7 @@ main (user's branch)
 5. Create PR targeting `develop`: `gh pr create --repo jrmatherly/auto-claude --base develop`
 
 **Verify before PR:**
+
 ```bash
 # Ensure only your commits are included
 git log --oneline upstream/develop..HEAD
@@ -269,6 +289,7 @@ git log --oneline upstream/develop..HEAD
 ### Security Model
 
 Three-layer defense:
+
 1. **OS Sandbox** - Bash command isolation
 2. **Filesystem Permissions** - Operations restricted to project directory
 3. **Command Allowlist** - Dynamic allowlist from project analysis (security.py + project_analyzer.py)
@@ -282,12 +303,14 @@ Security profile cached in `.auto-claude-security.json`.
 **Client Location:** `apps/backend/core/client.py`
 
 The `create_client()` function creates a configured `ClaudeSDKClient` instance with:
+
 - Multi-layered security (sandbox, permissions, security hooks)
 - Agent-specific tool permissions (planner, coder, qa_reviewer, qa_fixer)
 - Dynamic MCP server integration based on project capabilities
 - Extended thinking token budget control
 
 **Example usage in agents:**
+
 ```python
 from core.client import create_client
 
@@ -308,6 +331,7 @@ response = client.create_agent_session(
 ```
 
 **Why use the SDK:**
+
 - Pre-configured security (sandbox, allowlists, hooks)
 - Automatic MCP server integration (Context7, Linear, Graphiti, Electron, Puppeteer)
 - Tool permissions based on agent role
@@ -315,6 +339,7 @@ response = client.create_agent_session(
 - Unified API across all agent types
 
 **Where to find working examples:**
+
 - `apps/backend/agents/planner.py` - Planner agent
 - `apps/backend/agents/coder.py` - Coder agent
 - `apps/backend/agents/qa_reviewer.py` - QA reviewer
@@ -340,11 +365,13 @@ Auto Claude uses Graphiti as its primary memory system with embedded LadybugDB (
   - `schema.py` - Graph schema definitions
 
 **Configuration:**
+
 - Set provider credentials in `apps/backend/.env` (see `.env.example`)
 - Required env vars: `GRAPHITI_ENABLED=true`, `ANTHROPIC_API_KEY` or other provider keys
 - Memory data stored in `.auto-claude/specs/XXX/graphiti/`
 
 **Usage in agents:**
+
 ```python
 from integrations.graphiti.memory import get_graphiti_memory
 
@@ -362,10 +389,12 @@ memory.add_session_insight("Pattern: use React hooks for state")
 The frontend uses `react-i18next` for internationalization. All labels, buttons, messages, and user-facing text MUST use translation keys.
 
 **Translation file locations:**
+
 - `apps/frontend/src/shared/i18n/locales/en/*.json` - English translations
 - `apps/frontend/src/shared/i18n/locales/fr/*.json` - French translations
 
 **Translation namespaces:**
+
 - `common.json` - Shared labels, buttons, common terms
 - `navigation.json` - Sidebar navigation items, sections
 - `settings.json` - Settings page content
@@ -376,6 +405,7 @@ The frontend uses `react-i18next` for internationalization. All labels, buttons,
 - `welcome.json` - Welcome screen content
 
 **Usage pattern:**
+
 ```tsx
 import { useTranslation } from 'react-i18next';
 
@@ -398,6 +428,7 @@ const { t } = useTranslation(['errors']);
 ```
 
 **When adding new UI text:**
+
 1. Add the translation key to ALL language files (at minimum: `en/*.json` and `fr/*.json`)
 2. Use `namespace:section.key` format (e.g., `navigation:items.githubPRs`)
 3. Never use hardcoded strings in JSX/TSX files
@@ -542,12 +573,15 @@ const toolPath = await findExecutable('mytool', getMyToolPaths());
 The Electron MCP server allows QA agents to interact with the running Electron app via Chrome DevTools Protocol:
 
 **Setup:**
+
 1. Start the Electron app with remote debugging enabled:
+
    ```bash
    npm run dev  # Already configured with --remote-debugging-port=9222
    ```
 
 2. Enable Electron MCP in `apps/backend/.env`:
+
    ```bash
    ELECTRON_MCP_ENABLED=true
    ELECTRON_DEBUG_PORT=9222  # Default port
@@ -613,6 +647,7 @@ agent: "Click Submit and verify success"
 **Configuration in `core/client.py`:**
 
 The client automatically enables Electron MCP tools for QA agents when:
+
 - Project is detected as Electron (`is_electron` capability)
 - `ELECTRON_MCP_ENABLED=true` is set
 - Agent type is `qa_reviewer` or `qa_fixer`
@@ -622,22 +657,26 @@ The client automatically enables Electron MCP tools for QA agents when:
 ## Running the Application
 
 **As a standalone CLI tool**:
+
 ```bash
 cd apps/backend
 python run.py --spec 001
 ```
 
 **With the Electron frontend**:
+
 ```bash
 npm start        # Build and run desktop app
 npm run dev      # Run in development mode (includes --remote-debugging-port=9222 for E2E testing)
 ```
 
 **For E2E Testing with QA Agents:**
+
 1. Start the Electron app: `npm run dev`
 2. Enable Electron MCP in `apps/backend/.env`: `ELECTRON_MCP_ENABLED=true`
 3. Run QA: `python run.py --spec 001 --qa`
 4. QA agents will automatically interact with the running app for testing
 
 **Project data storage:**
+
 - `.auto-claude/specs/` - Per-project data (specs, plans, QA reports, memory) - gitignored

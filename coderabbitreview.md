@@ -15,6 +15,7 @@ This document tracks CodeRabbit automated review comments that were investigated
 **Our investigation:** Web search confirmed that `nomic-embed-text` uses **768 dimensions** (with a max sequence length of 8192 tokens). The model outputs 768-dimensional embeddings.
 
 **Sources verified:**
+
 - Ollama model library
 - Nomic AI documentation
 - HuggingFace model card
