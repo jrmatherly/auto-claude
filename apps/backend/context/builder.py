@@ -13,7 +13,7 @@ from pathlib import Path
 from .categorizer import FileCategorizer
 from .graphiti_integration import fetch_graph_hints, is_graphiti_enabled
 from .keyword_extractor import KeywordExtractor
-from .models import FileMatch, TaskContext
+from .models import FileMatch, MultiRepoContext, TaskContext
 from .pattern_discovery import PatternDiscoverer
 from .search import CodeSearcher
 from .service_matcher import ServiceMatcher
@@ -25,6 +25,7 @@ class ContextBuilder:
     def __init__(self, project_dir: Path, project_index: dict | None = None):
         self.project_dir = project_dir.resolve()
         self.project_index = project_index or self._load_project_index()
+        self.multi_repo_context = self._load_repo_mapping()
 
         # Initialize components
         self.searcher = CodeSearcher(self.project_dir)
@@ -48,6 +49,34 @@ class ContextBuilder:
         from analyzer import analyze_project
 
         return analyze_project(self.project_dir)
+
+    def _load_repo_mapping(self) -> MultiRepoContext | None:
+        """
+        Load multi-repo workspace mapping from repo_mapping.json.
+
+        This file provides cross-repo awareness for multi-repo workspaces,
+        including dependency relationships and cross-repo patterns.
+
+        Returns:
+            MultiRepoContext if mapping exists, None otherwise
+        """
+        mapping_file = self.project_dir / ".auto-claude" / "repo_mapping.json"
+        if not mapping_file.exists():
+            return None
+
+        try:
+            with open(mapping_file, encoding="utf-8") as f:
+                data = json.load(f)
+        except (OSError, json.JSONDecodeError, UnicodeDecodeError):
+            return None
+
+        return MultiRepoContext(
+            workspace_root=data.get("workspace_root", ""),
+            repos=data.get("repos", {}),
+            dependencies=data.get("dependencies", {}),
+            cross_repo_patterns=data.get("cross_repo_patterns", {}),
+            worktree_strategy=data.get("worktree_strategy", {}),
+        )
 
     def build_context(
         self,
@@ -139,6 +168,7 @@ class ContextBuilder:
             patterns_discovered=patterns,
             service_contexts=service_contexts,
             graph_hints=graph_hints,
+            multi_repo_context=self.multi_repo_context,
         )
 
     async def build_context_async(
@@ -220,6 +250,7 @@ class ContextBuilder:
             patterns_discovered=patterns,
             service_contexts=service_contexts,
             graph_hints=graph_hints,
+            multi_repo_context=self.multi_repo_context,
         )
 
     def _get_service_context(
